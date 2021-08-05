@@ -4,7 +4,7 @@ using NSubstitute;
 using System;
 using Xunit;
 
-namespace Framework.Results.Tests.Models
+namespace Framework.Results.Tests.Source.Models
 {
     public class DataResultTests
     {

@@ -1,4 +1,4 @@
-﻿namespace Framework.Results.Tests
+﻿namespace Framework.Results.Tests.Source
 {
     public interface IAnyAbstraction
     {

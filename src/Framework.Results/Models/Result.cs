@@ -1,10 +1,16 @@
 ﻿using Framework.Results.Exceptions;
 using System;
+using System.Threading.Tasks;
 
 namespace Framework.Results.Models
 {
-    public class Result : ResultBase
+    public class Result
     {
+        public bool Succeeded { get; protected set; }
+        public bool Failed => !Succeeded;
+        public string Message { get; protected set; }
+        public Exception Exception { get; protected set; }
+
         public Result() { }
 
         public Result(bool succeeded, Exception exception = default, string message = default)
@@ -62,6 +68,22 @@ namespace Framework.Results.Models
         {
             if (Succeeded)
                 action.Invoke(this);
+
+            return this;
+        }
+
+        public async Task<Result> OnFailedReturn(Func<Result, Task<Result>> function)
+        {
+            if (Failed)
+                return await function.Invoke(this);
+
+            return this;
+        }
+
+        public async Task<Result> OnSuccessReturn(Func<Result, Task<Result>> function)
+        {
+            if (Succeeded)
+                return await function.Invoke(this);
 
             return this;
         }

@@ -1,9 +1,10 @@
 ﻿using Framework.Results.Exceptions;
 using System;
+using System.Threading.Tasks;
 
 namespace Framework.Results.Models
 {
-    public class Result<T> : ResultBase
+    public class Result<T> : Result
     {
         public T Data { get; private set; }
 
@@ -75,14 +76,6 @@ namespace Framework.Results.Models
             return Data;
         }
 
-        public T OnFailedThrowsException()
-        {
-            if (Failed)
-                throw new ResultException(new Result(Succeeded, Exception, Message));
-
-            return Data;
-        }
-
         public Result<T> OnFailed(Action<Result<T>> action)
         {
             if (Failed)
@@ -98,5 +91,40 @@ namespace Framework.Results.Models
 
             return this;
         }
+
+        public async Task<Result> OnFailedReturn(Func<Result<T>, Task<Result>> function)
+        {
+            if (Failed)
+                return await function.Invoke(this);
+
+            return ToResult();
+        }
+
+        public async Task<Result<T>> OnFailedReturn(Func<Result<T>, Task<Result<T>>> function)
+        {
+            if (Failed)
+                return await function.Invoke(this);
+
+            return this;
+        }
+
+        public async Task<Result> OnSuccessReturn(Func<Result<T>, Task<Result>> function)
+        {
+            if (Succeeded)
+                return await function.Invoke(this);
+
+            return ToResult();
+        }
+
+        public async Task<Result<T>> OnSuccessReturn(Func<Result<T>, Task<Result<T>>> function)
+        {
+            if (Succeeded)
+                return await function.Invoke(this);
+
+            return this;
+        }
+
+        private Result ToResult()
+            => new Result(Succeeded, Exception, Message);
     }
 }
