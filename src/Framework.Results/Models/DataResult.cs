@@ -3,11 +3,11 @@ using System;
 
 namespace Framework.Results.Models
 {
-    public class Result<T> : Result
+    public class Result<T> : ResultBase
     {
         public T Data { get; private set; }
 
-        public new static Result<T> Success()
+        public static Result<T> Success()
         {
             return new Result<T>()
             {
@@ -16,16 +16,7 @@ namespace Framework.Results.Models
             };
         }
 
-        public static Result<T> Success(T data)
-        {
-            return new Result<T>()
-            {
-                Succeeded = true,
-                Data = data
-            };
-        }
-
-        public static Result<T> Success(string message, T data)
+        public static Result<T> Success(T data, string message = default)
         {
             return new Result<T>()
             {
@@ -35,16 +26,7 @@ namespace Framework.Results.Models
             };
         }
 
-        public static Result<T> Fail()
-        {
-            return new Result<T>()
-            {
-                Succeeded = false,
-                Data = default
-            };
-        }
-
-        public static Result<T> Fail(T data)
+        public static Result<T> Fail(T data = default)
         {
             return new Result<T>()
             {
@@ -85,6 +67,22 @@ namespace Framework.Results.Models
             };
         }
 
+        public T OnFailedThrowsDataException()
+        {
+            if (Failed)
+                throw new ResultDataException<T>(this);
+
+            return Data;
+        }
+
+        public T OnFailedThrowsException()
+        {
+            if (Failed)
+                throw new ResultException(new Result(Succeeded, Exception, Message));
+
+            return Data;
+        }
+
         public Result<T> OnFailed(Action<Result<T>> action)
         {
             if (Failed)
@@ -99,22 +97,6 @@ namespace Framework.Results.Models
                 action.Invoke(this);
 
             return this;
-        }
-
-        public T OnFailedThrowsDataException()
-        {
-            if (Failed)
-                throw new ResultDataException<T>(this);
-
-            return Data;
-        }
-
-        public new T OnFailedThrowsException()
-        {
-            if (Failed)
-                throw new ResultException(this);
-
-            return Data;
         }
     }
 }

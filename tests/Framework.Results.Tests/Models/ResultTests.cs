@@ -38,6 +38,19 @@ namespace Framework.Results.Tests.Models
         }
 
         [Fact]
+        public void Should_Return_Fail_Correctly()
+        {
+            //act
+            var result = Result.Fail();
+
+            //assert
+            Assert.False(result.Succeeded);
+            Assert.True(result.Failed);
+            Assert.Null(result.Message);
+            Assert.Null(result.Exception);
+        }
+
+        [Fact]
         public void Should_Return_Fail_WithMessage_Correctly()
         {
             //arrange
