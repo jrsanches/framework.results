@@ -74,7 +74,7 @@ namespace Framework.Results.Models
             };
         }
 
-        public static Result<T> Fail(string message, Exception exception, T data = default)
+        public static Result<T> Fail(Exception exception, string message, T data = default)
         {
             return new Result<T>()
             {

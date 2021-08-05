@@ -46,7 +46,7 @@ namespace Framework.Results.Models
             };
         }
 
-        public static Result Fail(string message, Exception exception)
+        public static Result Fail(Exception exception, string message)
         {
             return new Result()
             {
@@ -54,6 +54,14 @@ namespace Framework.Results.Models
                 Message = message,
                 Exception = exception
             };
+        }
+
+        public Result OnFailedThrowsException()
+        {
+            if (Failed)
+                throw new ResultException(this);
+
+            return this;
         }
 
         public Result OnFailed(Action<Result> action)
@@ -72,12 +80,5 @@ namespace Framework.Results.Models
             return this;
         }
 
-        public Result OnFailedThrowsException()
-        {
-            if (Failed)
-                throw new ResultException(this);
-
-            return this;
-        }
     }
 }
