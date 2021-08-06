@@ -200,7 +200,7 @@ namespace Framework.Results.Tests.Source.Models
         }
 
         [Fact]
-        public void Should_ThrowsDataException_OnFailed_Correctly()
+        public void Should_ThrowsResultDataException_OnFailed_Correctly()
         {
             //arrange
             var message = "any message";
@@ -210,7 +210,7 @@ namespace Framework.Results.Tests.Source.Models
             var exception = Assert.Throws<ResultDataException<IAnyAbstraction>>(() =>
             {
                 Result<IAnyAbstraction>.Fail(message, anyAbstraction)
-                    .OnFailedThrowsDataException();
+                    .GetDataThrowsException();
             });
 
             var result = exception.Result;
@@ -226,7 +226,21 @@ namespace Framework.Results.Tests.Source.Models
         }
 
         [Fact]
-        public void Should_ThrowsException_OnFailed_Correctly()
+        public void Should_ThrowsAnyException_OnGetDataFailed_Correctly()
+        {
+            //act
+            var exception = Assert.Throws<AnyException>(() =>
+            {
+                Result<IAnyAbstraction>.Fail("any message").GetDataOrThrows<AnyException>();
+            });
+
+            //assert
+            Assert.Equal("This is an Exception", exception.Message);
+            Assert.IsType<AnyException>(exception);
+        }
+
+        [Fact]
+        public void Should_ThrowsResultException_OnFailed_Correctly()
         {
             //arrange
             var message = "any message";
@@ -234,7 +248,7 @@ namespace Framework.Results.Tests.Source.Models
             //act
             var exception = Assert.Throws<ResultException>(() =>
             {
-                Result<IAnyAbstraction>.Fail(message).OnFailedThrowsException();
+                Result<IAnyAbstraction>.Fail(message).GetSuccessOrThrowsException();
             });
 
             var result = exception.Result;
@@ -247,6 +261,20 @@ namespace Framework.Results.Tests.Source.Models
 
             Assert.Equal(message, exception.Message);
             Assert.IsType<ResultException>(exception);
+        }
+
+        [Fact]
+        public void Should_ThrowsAnyException_OnFailed_Correctly()
+        {
+            //act
+            var exception = Assert.Throws<AnyException>(() =>
+            {
+                Result<IAnyAbstraction>.Fail("any message").GetSuccessOrThrows<AnyException>();
+            });
+
+            //assert
+            Assert.Equal("This is an Exception", exception.Message);
+            Assert.IsType<AnyException>(exception);
         }
 
         [Fact]

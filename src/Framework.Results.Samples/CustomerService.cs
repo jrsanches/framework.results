@@ -28,10 +28,10 @@ namespace Framework.Results.Samples
         public async Task<bool> ProcessCustomerThrowingException()
         {
             var customer = (await GetCustomer())
-                .OnFailedThrowsDataException();
+                .GetDataThrowsException();
 
             (await UpdateCustomer(customer))
-                .OnFailedThrowsException();
+                .GetSuccessOrThrowsException();
 
             return true;
         }

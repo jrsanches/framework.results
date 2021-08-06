@@ -68,10 +68,18 @@ namespace Framework.Results.Models
             };
         }
 
-        public T OnFailedThrowsDataException()
+        public T GetDataThrowsException()
         {
             if (Failed)
                 throw new ResultDataException<T>(this);
+
+            return Data;
+        }
+
+        public T GetDataOrThrows<TE>() where TE : Exception, new()
+        {
+            if (Failed)
+                throw new TE();
 
             return Data;
         }

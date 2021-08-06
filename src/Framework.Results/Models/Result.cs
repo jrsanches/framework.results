@@ -48,10 +48,18 @@ namespace Framework.Results.Models
             };
         }
 
-        public Result OnFailedThrowsException()
+        public Result GetSuccessOrThrowsException()
         {
             if (Failed)
                 throw new ResultException(this);
+
+            return this;
+        }
+
+        public Result GetSuccessOrThrows<TE>() where TE : Exception, new()
+        {
+            if (Failed)
+                throw new TE();
 
             return this;
         }
